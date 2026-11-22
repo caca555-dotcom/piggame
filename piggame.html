@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mr Grunt's Smart Lunch Advice!</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load cheerful storybook Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Custom storybook styling for P4 learners */
+    :root {
+      --bg-cream: #FFFDF5;
+      --card-white: #FFFFFF;
+      --pink-pig: #FF8DA1;
+      --pink-dark: #E05270;
+      --sky-blue: #4CC9F0;
+      --sun-yellow: #FFD166;
+      --leaf-green: #06D6A0;
+      --ink-dark: #2B2D42;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(#FFE5EC 2px, transparent 2px),
+        radial-gradient(#E0F7FA 2px, #FFFDF5 2px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+      color: var(--ink-dark);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Fredoka', sans-serif;
+    }
+
+    /* Tactile chunky storybook buttons & cards */
+    .btn-chunky {
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 5px 0 rgba(43, 45, 66, 0.2);
+    }
+    .btn-chunky:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(43, 45, 66, 0.2);
+    }
+
+    .card-storybook {
+      border: 3px solid #2B2D42;
+      box-shadow: 0 6px 0 #2B2D42;
+      border-radius: 1.5rem;
+    }
+
+    /* Dropzone visual states */
+    .drop-zone {
+      transition: all 0.18s ease;
+      border: 3px dashed rgba(43, 45, 66, 0.35);
+    }
+    .drop-zone.drag-over,
+    .drop-zone.tap-ready {
+      border-style: solid;
+      border-color: #2B2D42;
+      transform: scale(1.015);
+      box-shadow: inset 0 0 0 3px rgba(255, 209, 102, 0.85);
+    }
+
+    /* Food item card selection state for tap-to-place */
+    .food-card {
+      cursor: grab;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      border: 3px solid #2B2D42;
+      box-shadow: 0 4px 0 #2B2D42;
+    }
+    .food-card:active {
+      cursor: grabbing;
+    }
+    .food-card.selected-food {
+      transform: translateY(-4px) scale(1.05);
+      border-color: #E05270;
+      box-shadow: 0 0 0 4px #FFD166, 0 6px 0 #2B2D42;
+      background-color: #FFF9DB;
+    }
+
+    /* Handwritten sketch paper effect for Pippa's Art drawing */
+    .sketch-paper {
+      background: #FFFFFF;
+      border: 2px solid #94A3B8;
+      box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.12);
+      transform: rotate(-1deg);
+    }
+
+    /* Realistic Lunchbox Shell Styling */
+    .lunchbox-shell {
+      border: 4px solid #2B2D42;
+      border-radius: 2rem;
+      box-shadow: 0 8px 0 #2B2D42, inset 0 4px 0 rgba(255, 255, 255, 0.7);
+      position: relative;
+    }
+    .lunchbox-clasp {
+      width: 56px;
+      height: 12px;
+      background: #CBD5E1;
+      border: 3px solid #2B2D42;
+      border-radius: 9999px;
+      margin: -10px auto 6px auto;
+    }
+    .lunchbox-inner-tray {
+      background: #F8FAFC;
+      border: 3px solid #2B2D42;
+      border-radius: 1.4rem;
+      padding: 0.75rem;
+      box-shadow: inset 0 3px 6px rgba(15, 23, 42, 0.12);
+    }
+
+    /* Lined notebook paper effect for Paul's English report */
+    .lined-paper {
+      background-color: #FFFBEB;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 27px,
+        #FDE68A 28px
+      );
+      border: 3px solid #F59E0B;
+      box-shadow: 4px 5px 0 rgba(245, 158, 11, 0.25);
+    }
+
+    /* Gentle floating animation */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-float {
+      animation: floatSlow 3.2s ease-in-out infinite;
+    }
+
+    /* Custom scrollbar for compact smartboard layout */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- TOP NAVIGATION BAR (Always accessible, no countdown timer) -->
+  <header class="w-full bg-white/95 border-b-4 border-slate-800 px-4 py-2.5 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <!-- Brand / Title -->
+      <button onclick="goHome()" class="flex items-center gap-2.5 text-left group focus:outline-none">
+        <div class="w-11 h-11 rounded-2xl bg-pink-200 border-3 border-slate-800 flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+          <!-- Cute Mini Pig Emblem SVG -->
+          <svg viewBox="0 0 64 64" class="w-8 h-8">
+            <circle cx="32" cy="34" r="22" fill="#FF9EBB" stroke="#2B2D42" stroke-width="3.5"/>
+            <path d="M14 20 L10 8 L24 14 Z" fill="#FF7096" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M50 20 L54 8 L40 14 Z" fill="#FF7096" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="24" cy="29" r="3" fill="#2B2D42"/>
+            <circle cx="40" cy="29" r="3" fill="#2B2D42"/>
+            <ellipse cx="32" cy="39" rx="9" ry="6.5" fill="#FF7096" stroke="#2B2D42" stroke-width="3"/>
+            <circle cx="29" cy="39" r="1.8" fill="#2B2D42"/>
+            <circle cx="35" cy="39" r="1.8" fill="#2B2D42"/>
+          </svg>
+        </div>
+        <div>
+          <span class="font-display text-xl sm:text-2xl font-bold text-slate-800 tracking-tight block leading-none">
+            Mr Grunt's Smart Lunch Advice!
+          </span>
+          <span class="text-xs sm:text-sm font-bold text-pink-600">
+            Chapter 3 — Healthy Eating • Primary 4 English
+          </span>
+        </div>
+      </button>
+
+      <!-- Step Indicator & Quick Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div id="step-badge" class="hidden sm:flex items-center gap-1.5 bg-amber-100 border-2 border-slate-800 px-3 py-1 rounded-full text-sm font-extrabold text-slate-800">
+          <span id="step-badge-text">Choose a Student</span>
+        </div>
+      </button>
+
+      <!-- Step Indicator & Quick Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div id="step-badge" class="hidden sm:flex items-center gap-1.5 bg-amber-100 border-2 border-slate-800 px-3 py-1 rounded-full text-sm font-extrabold text-slate-800">
+          <span id="step-badge-text">Mission Select</span>
+        </div>
+
+        <button onclick="toggleHowToPlay(true)" class="btn-chunky bg-sky-300 hover:bg-sky-400 text-slate-900 font-display font-bold text-sm sm:text-base px-3.5 py-2 rounded-xl border-2 border-slate-800 flex items-center gap-1.5">
+          <span>❓</span>
+          <span>How to Play</span>
+        </button>
+
+        <button id="nav-home-btn" onclick="goHome()" class="hidden btn-chunky bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-bold text-sm sm:text-base px-3.5 py-2 rounded-xl border-2 border-slate-800 flex items-center gap-1.5">
+          <span>🏠</span>
+          <span>Home</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NON-BLOCKING TOAST / MESSAGE BANNER (Replaces alert()) -->
+  <div id="toast-banner" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 hidden max-w-lg w-[92%] bg-slate-900 text-white border-3 border-amber-300 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <span id="toast-icon" class="text-2xl">💡</span>
+      <p id="toast-message" class="font-bold text-base sm:text-lg leading-snug"></p>
+    </div>
+    <button onclick="hideToast()" class="bg-white/20 hover:bg-white/30 rounded-lg px-2.5 py-1 text-sm font-bold">OK</button>
+  </div>
+
+  <!-- HOW TO PLAY MODAL -->
+  <div id="how-to-play-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden items-center justify-center p-4">
+    <div class="card-storybook bg-white max-w-xl w-full p-6 sm:p-7 relative">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-800 flex items-center gap-2">
+          <span>🗺️</span> How to Play
+        </h2>
+        <button onclick="toggleHowToPlay(false)" class="btn-chunky bg-rose-400 text-white font-display font-bold w-10 h-10 rounded-xl border-2 border-slate-800 text-xl flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-3 text-lg font-bold text-slate-800">
+        <div class="flex items-center gap-3.5 bg-amber-50 border-2 border-amber-300 p-3.5 rounded-2xl">
+          <span class="w-9 h-9 rounded-full bg-amber-400 border-2 border-slate-800 flex items-center justify-center font-display text-xl shrink-0">1</span>
+          <span>Read about the pig's old lunch.</span>
+        </div>
+        <div class="flex items-center gap-3.5 bg-emerald-50 border-2 border-emerald-300 p-3.5 rounded-2xl">
+          <span class="w-9 h-9 rounded-full bg-emerald-400 border-2 border-slate-800 flex items-center justify-center font-display text-xl shrink-0">2</span>
+          <span>Fix the lunchbox.</span>
+        </div>
+        <div class="flex items-center gap-3.5 bg-sky-50 border-2 border-sky-300 p-3.5 rounded-2xl">
+          <span class="w-9 h-9 rounded-full bg-sky-400 border-2 border-slate-800 flex items-center justify-center font-display text-xl shrink-0">3</span>
+          <span>Complete the advice.</span>
+        </div>
+        <div class="flex items-center gap-3.5 bg-pink-50 border-2 border-pink-300 p-3.5 rounded-2xl">
+          <span class="w-9 h-9 rounded-full bg-pink-400 border-2 border-slate-800 flex items-center justify-center font-display text-xl shrink-0">4</span>
+          <span>Check and present!</span>
+        </div>
+      </div>
+
+      <div class="mt-5 bg-slate-100 rounded-xl p-3 text-sm sm:text-base font-bold text-slate-700 border-2 border-slate-300">
+        💡 Tip: Drag food cards into the new lunchbox, or tap a food card and then tap a lunchbox section!
+      </div>
+
+      <div class="mt-6 text-center">
+        <button onclick="toggleHowToPlay(false)" class="btn-chunky bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-display font-bold text-xl px-8 py-3 rounded-2xl border-3 border-slate-800">
+          Got It! Let's Go! 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL LUNCHBOX CELEBRATION MODAL (Triggered by "SHOW FINAL LUNCHBOX" button on Screen 4) -->
+  <div id="final-lunchbox-modal" class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs z-40 hidden items-center justify-center p-4">
+    <div class="card-storybook bg-amber-50 max-w-2xl w-full p-6 sm:p-8 text-center relative">
+      <div class="inline-block bg-emerald-400 border-2 border-slate-800 px-4 py-1 rounded-full font-display font-bold text-sm sm:text-base mb-2">
+        🌟 Smart Lunch 3-2-1 Complete! 🌟
+      </div>
+      <h2 id="final-modal-title" class="font-display text-3xl sm:text-4xl font-bold text-slate-800 mb-4">
+        Paul Pig's Healthy Lunchbox!
+      </h2>
+
+      <!-- Enlarged Lunchbox Showcase -->
+      <div id="final-modal-lunchbox" class="bg-white border-4 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-inner mb-5">
+        <!-- Populated dynamically -->
+      </div>
+
+      <p id="final-modal-quote" class="font-display text-xl sm:text-2xl font-bold text-pink-600 mb-5">
+        "Thank you! My new lunch looks delicious and healthy!"
+      </p>
+
+      <button onclick="closeFinalLunchboxModal()" class="btn-chunky bg-sky-400 hover:bg-sky-500 text-slate-900 font-display font-bold text-xl px-8 py-3 rounded-2xl border-3 border-slate-800">
+        Back to Presentation
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 w-full max-w-[1440px] mx-auto px-3 sm:px-5 py-3 sm:py-4">
+
+    <!-- ========================================================= -->
+    <!-- SCREEN 1 — WELCOME                                        -->
+    <!-- ========================================================= -->
+    <section id="screen-welcome" class="py-3 sm:py-5">
+      <div class="text-center max-w-4xl mx-auto mb-5 sm:mb-6">
+        <div class="inline-flex items-center gap-2 bg-amber-200 border-2 border-slate-800 px-4 py-1.5 rounded-full font-display font-bold text-sm sm:text-base mb-2.5 shadow-xs">
+          <span>📖</span>
+          <span>Chapter 3: Healthy Eating • Smart Lunch 3-2-1</span>
+        </div>
+        <h1 class="font-display text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight mb-3">
+          Mr Grunt's Smart Lunch Advice!
+        </h1>
+
+        <!-- Mr Grunt Teacher Speech Banner -->
+        <div class="max-w-3xl mx-auto bg-emerald-50 border-3 border-slate-800 rounded-3xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-center gap-3.5 text-left shadow-sm">
+          <!-- Mr Grunt Cartoon SVG (Round glasses, light blue shirt, green tie, green trousers) -->
+          <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-emerald-200 border-3 border-slate-800 flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 120 120" class="w-18 h-18 sm:w-22 sm:h-22">
+              <!-- Shirt & Green Trousers -->
+              <path d="M26 114 C26 88, 94 88, 94 114 Z" fill="#BAE6FD" stroke="#2B2D42" stroke-width="4"/>
+              <path d="M55 92 L60 112 L65 92 L60 86 Z" fill="#059669" stroke="#2B2D42" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Ears -->
+              <path d="M32 36 L22 14 L46 25 Z" fill="#E09F7D" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M88 36 L98 14 L74 25 Z" fill="#E09F7D" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+              <!-- Face -->
+              <circle cx="60" cy="56" r="35" fill="#F4B897" stroke="#2B2D42" stroke-width="4"/>
+              <!-- Big Round Glasses -->
+              <circle cx="45" cy="46" r="13" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+              <circle cx="75" cy="46" r="13" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+              <line x1="58" y1="46" x2="62" y2="46" stroke="#2B2D42" stroke-width="3.5"/>
+              <!-- Happy Eyes -->
+              <path d="M40 46 Q45 40 50 46" fill="none" stroke="#2B2D42" stroke-width="3" stroke-linecap="round"/>
+              <path d="M70 46 Q75 40 80 46" fill="none" stroke="#2B2D42" stroke-width="3" stroke-linecap="round"/>
+              <!-- Snout -->
+              <ellipse cx="73" cy="63" rx="13" ry="10" fill="#E09F7D" stroke="#2B2D42" stroke-width="3.5"/>
+              <circle cx="69" cy="63" r="2.5" fill="#2B2D42"/>
+              <circle cx="77" cy="63" r="2.5" fill="#2B2D42"/>
+              <!-- Smile -->
+              <path d="M44 68 Q52 82 64 74" fill="#F43F5E" stroke="#2B2D42" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="inline-block bg-emerald-400 border-2 border-slate-800 px-3 py-0.5 rounded-full font-display font-bold text-xs sm:text-sm text-slate-900 mb-1">
+              👨‍🏫 Mr Grunt (Class Teacher)
+            </div>
+            <p class="text-base sm:text-lg font-bold text-slate-800 leading-snug">
+              "Let's check Paul Pig's and Pippa Pig's lunches! Help me design a healthy <strong>Smart Lunch 3-2-1</strong> box and give them good advice!"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Big Clickable Student Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-7 max-w-5xl mx-auto">
+
+        <!-- GROUPS 1–3 — Paul Pig -->
+        <button onclick="startMission('paul')" class="card-storybook btn-chunky bg-sky-100 hover:bg-sky-200 p-5 sm:p-7 text-left flex flex-col justify-between group focus:outline-none">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3.5">
+              <span class="bg-sky-400 border-2 border-slate-800 px-4 py-1 rounded-full font-display font-bold text-base sm:text-lg text-slate-900">
+                GROUPS 1 – 3
+              </span>
+              <span class="text-sm font-extrabold text-sky-900 bg-white/80 px-3 py-1 rounded-full border border-sky-300">
+                Student: Paul Pig
+              </span>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-5 mb-4">
+              <!-- Paul Pig Cartoon SVG -->
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white border-3 border-slate-800 flex items-center justify-center shrink-0 animate-float">
+                <svg viewBox="0 0 120 120" class="w-20 h-20 sm:w-24 sm:h-24">
+                  <path d="M28 42 L18 18 L44 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+                  <path d="M92 42 L102 18 L76 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+                  <circle cx="60" cy="64" r="38" fill="#FFA6C1" stroke="#2B2D42" stroke-width="4"/>
+                  <circle cx="45" cy="54" r="11" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+                  <circle cx="75" cy="54" r="11" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+                  <line x1="56" y1="54" x2="64" y2="54" stroke="#2B2D42" stroke-width="3.5"/>
+                  <circle cx="46" cy="54" r="4" fill="#2B2D42"/>
+                  <circle cx="74" cy="54" r="4" fill="#2B2D42"/>
+                  <ellipse cx="60" cy="74" rx="15" ry="11" fill="#FF7597" stroke="#2B2D42" stroke-width="3.5"/>
+                  <circle cx="55" cy="74" r="3" fill="#2B2D42"/>
+                  <circle cx="65" cy="74" r="3" fill="#2B2D42"/>
+                  <path d="M51 89 Q60 96 69 89" fill="none" stroke="#2B2D42" stroke-width="3.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+
+              <div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-tight group-hover:text-sky-900">
+                  Groups 1–3 — Advise Paul Pig
+                </h2>
+                <p class="text-sm sm:text-base font-bold text-slate-700 mt-1">
+                  Paul only ate a few vegetables and a little fruit. Pack a Smart Lunch and write Mr Grunt's advice!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-1 w-full bg-sky-400 group-hover:bg-sky-500 border-3 border-slate-800 rounded-2xl py-2.5 text-center font-display font-bold text-xl text-slate-900">
+            Advise Paul Pig →
+          </div>
+        </button>
+
+        <!-- GROUPS 4–6 — Pippa Pig -->
+        <button onclick="startMission('pippa')" class="card-storybook btn-chunky bg-pink-100 hover:bg-pink-200 p-5 sm:p-7 text-left flex flex-col justify-between group focus:outline-none">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3.5">
+              <span class="bg-pink-400 border-2 border-slate-800 px-4 py-1 rounded-full font-display font-bold text-base sm:text-lg text-slate-900">
+                GROUPS 4 – 6
+              </span>
+              <span class="text-sm font-extrabold text-pink-900 bg-white/80 px-3 py-1 rounded-full border border-pink-300">
+                Student: Pippa Pig
+              </span>
+            </div>
+
+            <div class="flex items-center gap-4 sm:gap-5 mb-4">
+              <!-- Pippa Pig Cartoon SVG -->
+              <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white border-3 border-slate-800 flex items-center justify-center shrink-0 animate-float" style="animation-delay: 0.4s;">
+                <svg viewBox="0 0 120 120" class="w-20 h-20 sm:w-24 sm:h-24">
+                  <path d="M28 42 L18 18 L44 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+                  <path d="M92 42 L102 18 L76 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+                  <circle cx="60" cy="64" r="38" fill="#FFA6C1" stroke="#2B2D42" stroke-width="4"/>
+                  <path d="M74 26 L88 18 L86 34 Z" fill="#FFD166" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+                  <path d="M74 26 L62 16 L60 32 Z" fill="#FFD166" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+                  <circle cx="74" cy="26" r="4.5" fill="#FF5D8F" stroke="#2B2D42" stroke-width="2.5"/>
+                  <circle cx="46" cy="54" r="4.5" fill="#2B2D42"/>
+                  <circle cx="74" cy="54" r="4.5" fill="#2B2D42"/>
+                  <path d="M40 47 L43 50 M77 50 L80 47" stroke="#2B2D42" stroke-width="2.5" stroke-linecap="round"/>
+                  <ellipse cx="60" cy="74" rx="15" ry="11" fill="#FF7597" stroke="#2B2D42" stroke-width="3.5"/>
+                  <circle cx="55" cy="74" r="3" fill="#2B2D42"/>
+                  <circle cx="65" cy="74" r="3" fill="#2B2D42"/>
+                  <path d="M51 89 Q60 96 69 89" fill="none" stroke="#2B2D42" stroke-width="3.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+
+              <div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 leading-tight group-hover:text-pink-900">
+                  Groups 4–6 — Advise Pippa Pig
+                </h2>
+                <p class="text-sm sm:text-base font-bold text-slate-700 mt-1">
+                  Pippa ate a lot of vegetables, a little chicken, and some noodles. Pack a Smart Lunch and write Mr Grunt's advice!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-1 w-full bg-pink-400 group-hover:bg-pink-500 border-3 border-slate-800 rounded-2xl py-2.5 text-center font-display font-bold text-xl text-slate-900">
+            Advise Pippa Pig →
+          </div>
+        </button>
+      </div>
+
+      <!-- Group Roles Strip (Student A, B, C, D) -->
+      <div class="max-w-5xl mx-auto mt-6 bg-white/95 border-3 border-slate-800 rounded-3xl p-4 sm:p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">👥</span>
+            <h3 class="font-display font-bold text-xl text-slate-900">Group Roles (Work Together!)</h3>
+          </div>
+          <button onclick="toggleHowToPlay(true)" class="btn-chunky bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-bold text-sm sm:text-base px-4 py-1.5 rounded-xl border-2 border-slate-800">
+            ❓ How to Play
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- Student A: Reader -->
+          <div class="bg-sky-50 border-2 border-slate-800 rounded-2xl p-3 flex items-start gap-2.5">
+            <span class="text-2xl shrink-0">📖</span>
+            <div>
+              <div class="font-display font-bold text-base text-sky-900">Student A — Reader</div>
+              <p class="text-xs sm:text-sm font-bold text-slate-700 leading-snug">Read the story and picture labels aloud.</p>
+            </div>
+          </div>
+
+          <!-- Student B: Food Designer -->
+          <div class="bg-emerald-50 border-2 border-slate-800 rounded-2xl p-3 flex items-start gap-2.5">
+            <span class="text-2xl shrink-0">🍱</span>
+            <div>
+              <div class="font-display font-bold text-base text-emerald-900">Student B — Food Designer</div>
+              <p class="text-xs sm:text-sm font-bold text-slate-700 leading-snug">Drag and drop food into the new lunchbox.</p>
+            </div>
+          </div>
+
+          <!-- Student C: Language Helper -->
+          <div class="bg-amber-50 border-2 border-slate-800 rounded-2xl p-3 flex items-start gap-2.5">
+            <span class="text-2xl shrink-0">✍️</span>
+            <div>
+              <div class="font-display font-bold text-base text-amber-900">Student C — Language Helper</div>
+              <p class="text-xs sm:text-sm font-bold text-slate-700 leading-snug">Choose <em>more</em>, <em>fewer</em>, or <em>less</em> below.</p>
+            </div>
+          </div>
+
+          <!-- Student D: Presenter -->
+          <div class="bg-pink-50 border-2 border-slate-800 rounded-2xl p-3 flex items-start gap-2.5">
+            <span class="text-2xl shrink-0">🎤</span>
+            <div>
+              <div class="font-display font-bold text-base text-pink-900">Student D — Presenter</div>
+              <p class="text-xs sm:text-sm font-bold text-slate-700 leading-snug">Check the answers and present to the class.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SCREEN 2 & 3 — MISSION WORKSPACE (PAUL & PIPPA SINGLE-PAGE) -->
+    <!-- ========================================================= -->
+    <section id="screen-mission" class="hidden space-y-4">
+
+      <!-- TOP CHARACTER READING & COMPLETED MODEL STRIP -->
+      <div class="card-storybook bg-white p-4 sm:p-5">
+        <div class="flex flex-col lg:flex-row items-stretch gap-4">
+          <!-- Character Avatar & Group Badge -->
+          <div class="flex flex-col items-center justify-center shrink-0 lg:w-40">
+            <span id="mission-student-tag" class="bg-sky-300 border-2 border-slate-800 px-3 py-0.5 rounded-full font-display font-bold text-sm mb-2">
+              GROUPS 1–3 — PAUL PIG
+            </span>
+            <div id="mission-avatar-box" class="flex flex-col items-center">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Reading Card (Paul's Report OR Pippa's Art Drawing) -->
+          <div class="flex-1 flex flex-col justify-center">
+            <!-- Paul Pig Reading Card -->
+            <div id="paul-reading-card" class="lined-paper rounded-2xl p-4">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-amber-800">📖 Paul's English Report — My Lunch</span>
+                <span class="text-xs font-bold text-slate-600">By Paul Pig</span>
+              </div>
+              <p class="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed">
+                "At lunchtime I ate <span class="underline decoration-emerald-500 decoration-2">a few</span> vegetables — half a tomato, four peas and a baby carrot.<br/>
+                I also ate <span class="underline decoration-purple-500 decoration-2">a little</span> fruit — two cherries and three grapes."
+              </p>
+            </div>
+
+            <!-- Pippa Pig Reading Card -->
+            <div id="pippa-reading-card" class="hidden sketch-paper rounded-2xl p-3.5 sm:p-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <p class="font-display font-bold text-base sm:text-lg text-slate-800">
+                  🎨 Pippa Pig was good at Art. She drew her lunch.
+                </p>
+                <span class="text-xs font-bold text-slate-500">By Pippa Pig</span>
+              </div>
+              <!-- Pippa's Annotated Lunch Drawing -->
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-50 border border-slate-300 rounded-xl p-2.5">
+                <div class="sm:col-span-5 flex justify-center">
+                  <svg viewBox="0 0 220 130" class="w-full max-w-[210px] h-auto">
+                    <!-- Plate -->
+                    <ellipse cx="110" cy="70" rx="92" ry="50" fill="#FFFFFF" stroke="#64748B" stroke-width="2.5"/>
+                    <ellipse cx="110" cy="70" rx="78" ry="40" fill="none" stroke="#CBD5E1" stroke-width="1.5"/>
+                    <!-- Lots of Broccoli (top left) -->
+                    <circle cx="80" cy="52" r="14" fill="#16A34A" stroke="#14532D" stroke-width="2"/>
+                    <circle cx="98" cy="46" r="15" fill="#22C55E" stroke="#14532D" stroke-width="2"/>
+                    <circle cx="114" cy="54" r="14" fill="#16A34A" stroke="#14532D" stroke-width="2"/>
+                    <circle cx="92" cy="62" r="13" fill="#4ADE80" stroke="#14532D" stroke-width="2"/>
+                    <!-- Lots of Lettuce (right) -->
+                    <path d="M122 52 Q145 36 164 56 Q172 78 148 84 Q124 82 122 52 Z" fill="#84CC16" stroke="#365314" stroke-width="2"/>
+                    <path d="M132 60 Q148 52 156 68" fill="none" stroke="#ECFCCB" stroke-width="2"/>
+                    <!-- Small Chicken Drumstick (bottom left) -->
+                    <rect x="66" y="76" width="12" height="4" rx="1.5" fill="#FEF3C7" stroke="#78350F" stroke-width="1.5"/>
+                    <ellipse cx="56" cy="78" rx="11" ry="8" fill="#F59E0B" stroke="#78350F" stroke-width="2"/>
+                    <!-- Some Noodles (bottom center) -->
+                    <path d="M84 86 Q96 76 108 86 T132 86" fill="none" stroke="#FACC15" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M86 92 Q98 83 110 92 T130 92" fill="none" stroke="#EAB308" stroke-width="3.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="sm:col-span-7 grid grid-cols-2 gap-2 text-xs sm:text-sm font-extrabold">
+                  <div class="bg-emerald-100 border border-emerald-400 rounded-lg px-2.5 py-1.5 text-emerald-950">
+                    🥦 broccoli — <span class="text-emerald-700">yum!</span>
+                  </div>
+                  <div class="bg-lime-100 border border-lime-400 rounded-lg px-2.5 py-1.5 text-lime-950">
+                    🥬 lettuce — <span class="text-lime-700">yum yum!</span>
+                  </div>
+                  <div class="bg-rose-100 border border-rose-400 rounded-lg px-2.5 py-1.5 text-rose-950">
+                    🍗 chicken — <span class="text-rose-700">yuck!</span>
+                  </div>
+                  <div class="bg-amber-100 border border-amber-400 rounded-lg px-2.5 py-1.5 text-amber-950">
+                    🍜 noodles — <span class="text-amber-700">OK</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Already-Completed Model Sentence -->
+          <div class="lg:w-80 bg-amber-50 border-3 border-amber-400 rounded-2xl p-4 flex flex-col justify-center">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-800 mb-1">
+              ✅ Completed Model (Read Together)
+            </span>
+            <div id="model-sentence-box">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-COLUMN SIDE-BY-SIDE LUNCHBOX RESCUE WORKSPACE -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
+
+        <!-- LEFT COLUMN (3 cols): OLD LUNCHBOX -->
+        <div class="xl:col-span-3 lunchbox-shell bg-slate-200 p-4 flex flex-col justify-between">
+          <div>
+            <div class="lunchbox-clasp"></div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-display text-xl font-bold text-slate-800 flex items-center gap-1.5">
+                <span>📦</span> OLD LUNCHBOX
+              </h3>
+              <span class="text-xs font-extrabold bg-slate-300 text-slate-800 px-2.5 py-0.5 rounded-full">Before</span>
+            </div>
+
+            <div class="lunchbox-inner-tray">
+              <div id="old-lunchbox-visual">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <p id="old-lunchbox-caption" class="mt-3 text-xs sm:text-sm font-bold text-slate-700 bg-white/80 border border-slate-300 rounded-xl p-2.5">
+            <!-- Populated dynamically -->
+          </p>
+        </div>
+
+        <!-- MIDDLE COLUMN (5 cols): NEW SMART LUNCH 3-2-1 LUNCHBOX -->
+        <div class="xl:col-span-5 lunchbox-shell bg-emerald-300 p-4 flex flex-col justify-between">
+          <div>
+            <div class="lunchbox-clasp"></div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="font-display text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-1.5">
+                <span>🍱</span> NEW LUNCHBOX (3-2-1)
+              </h3>
+              <button type="button" onclick="resetNewLunchbox()" class="btn-chunky bg-white hover:bg-rose-100 text-slate-900 font-display font-bold text-xs sm:text-sm px-3 py-1 rounded-xl border-2 border-slate-800">
+                🔄 Reset Box
+              </button>
+            </div>
+
+            <!-- Bento Tray with 3-2-1 Ratio Compartments -->
+            <div class="lunchbox-inner-tray space-y-2.5">
+              <div class="grid grid-cols-12 gap-2.5 min-h-[245px]">
+                <!-- ZONE 3: Rice / Noodles (Largest - Left 7 columns) -->
+                <div
+                  ondragover="handleDragOver(event)"
+                  ondragleave="handleDragLeave(event)"
+                  ondrop="handleDrop(event, 'grains')"
+                  onclick="handleZoneTap('grains')"
+                  class="col-span-7 drop-zone bg-amber-50 rounded-2xl p-2.5 flex flex-col justify-between cursor-pointer"
+                >
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="font-display font-bold text-sm sm:text-base text-amber-950">3 • Rice / Noodles</span>
+                    <span id="count-grains" class="text-xs font-extrabold bg-amber-300 border border-slate-800 px-2 py-0.5 rounded-full">0 / 3</span>
+                  </div>
+                  <div id="items-grains" class="flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5"></div>
+                  <p id="hint-grains" class="text-center text-xs font-bold text-amber-800/80 my-auto py-4">
+                    Largest portion (up to 3)<br/>Drag or tap food here
+                  </p>
+                </div>
+
+                <!-- Right 5 columns: Zone 2 (Vegetables) + Zone 1 (Meat) -->
+                <div class="col-span-5 flex flex-col gap-2.5">
+                  <!-- ZONE 2: Vegetables -->
+                  <div
+                    ondragover="handleDragOver(event)"
+                    ondragleave="handleDragLeave(event)"
+                    ondrop="handleDrop(event, 'vegetables')"
+                    onclick="handleZoneTap('vegetables')"
+                    class="flex-1 drop-zone bg-emerald-50 rounded-2xl p-2.5 flex flex-col justify-between cursor-pointer"
+                  >
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                      <span class="font-display font-bold text-sm text-emerald-950">2 • Vegetables</span>
+                      <span id="count-vegetables" class="text-xs font-extrabold bg-emerald-300 border border-slate-800 px-2 py-0.5 rounded-full">0 / 2</span>
+                    </div>
+                    <div id="items-vegetables" class="flex-1 flex items-center justify-center gap-1.5"></div>
+                    <p id="hint-vegetables" class="text-center text-xs font-bold text-emerald-800/80 my-auto py-2">
+                      Up to 2 veggies
+                    </p>
+                  </div>
+
+                  <!-- ZONE 1: Meat (Smallest) -->
+                  <div
+                    ondragover="handleDragOver(event)"
+                    ondragleave="handleDragLeave(event)"
+                    ondrop="handleDrop(event, 'meat')"
+                    onclick="handleZoneTap('meat')"
+                    class="flex-1 drop-zone bg-rose-50 rounded-2xl p-2.5 flex flex-col justify-between cursor-pointer"
+                  >
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                      <span class="font-display font-bold text-sm text-rose-950">1 • Meat</span>
+                      <span id="count-meat" class="text-xs font-extrabold bg-rose-300 border border-slate-800 px-2 py-0.5 rounded-full">0 / 1</span>
+                    </div>
+                    <div id="items-meat" class="flex-1 flex items-center justify-center gap-1.5"></div>
+                    <p id="hint-meat" class="text-center text-xs font-bold text-rose-800/80 my-auto py-2">
+                      Smallest (1 meat)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Optional Side Portion: Fruit (Separate from 3:2:1 ratio) -->
+              <div
+                ondragover="handleDragOver(event)"
+                ondragleave="handleDragLeave(event)"
+                ondrop="handleDrop(event, 'fruit')"
+                onclick="handleZoneTap('fruit')"
+                class="drop-zone bg-purple-50 rounded-2xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 cursor-pointer"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-display font-bold text-sm text-purple-950">🍒 Side Cup • Fruit (Optional)</span>
+                </div>
+                <div id="items-fruit" class="flex flex-wrap items-center gap-1.5"></div>
+                <p id="hint-fruit" class="text-xs font-bold text-purple-800/80">
+                  Separate side portion — add fruit if you like!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN (4 cols): DRAGGABLE FOOD BANK -->
+        <div class="xl:col-span-4 card-storybook bg-white p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+              <h3 class="font-display text-xl font-bold text-slate-900 flex items-center gap-1.5">
+                <span>🍽️</span> Food Dishes
+              </h3>
+              <span id="selected-food-status" class="text-xs font-extrabold text-sky-900 bg-sky-200 px-2.5 py-1 rounded-full">
+                Tap or drag food to the box!
+              </span>
+            </div>
+
+            <!-- Scrollable Food Cards Grid -->
+            <div id="food-bank-grid" class="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-3 gap-2 max-h-[330px] overflow-y-auto pr-1">
+              <!-- Populated by initFoodBank() -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ADVICE SENTENCES & CHECK BUTTON -->
+      <div class="card-storybook bg-sky-50 p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h3 id="advice-heading" class="font-display text-2xl sm:text-3xl font-bold text-slate-900">
+            Give Paul Pig advice!
+          </h3>
+          <span class="bg-white border-2 border-slate-800 px-3 py-1 rounded-full text-xs sm:text-sm font-extrabold text-slate-800">
+            Pattern: You need to eat <span class="text-pink-600">more / fewer / less</span> + food.
+          </span>
+        </div>
+
+        <!-- STUDENT A (PAUL) ADVICE FORM -->
+        <div id="paul-advice-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-lg sm:text-xl font-bold text-slate-900">
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>1. You need to eat</span>
+            <select id="paul-q1" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>rice.</span>
+          </div>
+
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>2. You need to eat</span>
+            <select id="paul-q2" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>meat.</span>
+          </div>
+
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>3. You need to eat</span>
+            <select id="paul-q3" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>vegetables.</span>
+          </div>
+
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>4. You need to eat</span>
+            <select id="paul-q4" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>fruit.</span>
+          </div>
+        </div>
+
+        <!-- STUDENT B (PIPPA) ADVICE FORM -->
+        <div id="pippa-advice-form" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3 text-lg sm:text-xl font-bold text-slate-900">
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>1. You need to eat</span>
+            <select id="pippa-q1" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>meat.</span>
+          </div>
+
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>2. You need to eat</span>
+            <select id="pippa-q2" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>vegetables.</span>
+          </div>
+
+          <div class="bg-white border-2 border-slate-800 rounded-2xl p-3.5 flex flex-wrap items-center gap-2">
+            <span>3. You need to eat</span>
+            <select id="pippa-q3" class="bg-amber-100 border-2 border-slate-800 rounded-xl px-3 py-1.5 font-display font-bold text-pink-700 cursor-pointer">
+              <option value="">-- choose --</option>
+              <option value="more">more</option>
+              <option value="fewer">fewer</option>
+              <option value="less">less</option>
+            </select>
+            <span>noodles.</span>
+          </div>
+        </div>
+
+        <!-- Optional Challenge Me! Box & Submit Button Row -->
+        <div class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div class="flex-1">
+            <button type="button" onclick="toggleChallengeMe()" class="text-sm font-extrabold text-indigo-900 bg-indigo-100 hover:bg-indigo-200 border-2 border-slate-800 px-3.5 py-1.5 rounded-xl inline-flex items-center gap-1.5">
+              <span>⭐ Challenge Me! (Optional extra sentence)</span>
+              <span id="challenge-toggle-arrow">▼</span>
+            </button>
+            <div id="challenge-me-box" class="hidden mt-2">
+              <input
+                id="challenge-input"
+                type="text"
+                placeholder="Type one extra sentence, e.g., You need to eat fewer sweets."
+                class="w-full bg-white border-2 border-slate-800 rounded-xl px-3.5 py-2 text-base font-bold text-slate-900"
+              />
+            </div>
+          </div>
+
+          <button type="button" onclick="checkMyLunchbox()" class="btn-chunky bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-display font-bold text-xl sm:text-2xl px-8 py-3.5 rounded-2xl border-3 border-slate-800 flex items-center justify-center gap-2 shrink-0">
+            <span>✅</span>
+            <span>CHECK MY LUNCHBOX</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SCREEN 4 — CHECK AND PRESENT                              -->
+    <!-- ========================================================= -->
+    <section id="screen-present" class="hidden space-y-5">
+
+      <!-- FEEDBACK REPORT BANNER -->
+      <div id="feedback-banner" class="card-storybook bg-white p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center gap-3">
+            <span id="feedback-main-emoji" class="text-4xl">🎉</span>
+            <div>
+              <h2 id="feedback-main-title" class="font-display text-2xl sm:text-4xl font-bold text-slate-900">
+                Great advice!
+              </h2>
+              <p id="feedback-main-subtitle" class="text-base sm:text-lg font-bold text-slate-600">
+                Let's check your lunchbox and your English sentences!
+              </p>
+            </div>
+          </div>
+
+          <button onclick="openFinalLunchboxModal()" class="btn-chunky bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-bold text-base sm:text-lg px-5 py-2.5 rounded-2xl border-3 border-slate-800 flex items-center gap-2">
+            <span>🍱</span>
+            <span>SHOW FINAL LUNCHBOX</span>
+          </button>
+        </div>
+
+        <!-- 3 Separate Deterministic Feedback Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- 1. Lunchbox Food Groups Check -->
+          <div id="fb-card-lunchbox" class="rounded-2xl border-3 border-slate-800 p-4 bg-emerald-50">
+            <div class="font-display font-bold text-lg text-slate-900 mb-1 flex items-center gap-2">
+              <span>🍱</span> 1. Smart Lunch 3-2-1 Check
+            </div>
+            <p id="fb-text-lunchbox" class="text-base font-bold text-slate-800"></p>
+          </div>
+
+          <!-- 2. Story Advice Check -->
+          <div id="fb-card-advice" class="rounded-2xl border-3 border-slate-800 p-4 bg-sky-50">
+            <div class="font-display font-bold text-lg text-slate-900 mb-1 flex items-center gap-2">
+              <span>💬</span> 2. Story Advice Check
+            </div>
+            <div id="fb-text-advice" class="text-base font-bold text-slate-800 space-y-1"></div>
+          </div>
+
+          <!-- 3. Grammar Rule Check -->
+          <div id="fb-card-grammar" class="rounded-2xl border-3 border-slate-800 p-4 bg-amber-50">
+            <div class="font-display font-bold text-lg text-slate-900 mb-1 flex items-center gap-2">
+              <span>✍️</span> 3. Grammar Check
+            </div>
+            <div id="fb-text-grammar" class="text-base font-bold text-slate-800 space-y-1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE OLD VS NEW LUNCHBOX COMPARISON -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div class="card-storybook bg-white p-5">
+          <h3 class="font-display text-xl sm:text-2xl font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <span>📦</span> OLD LUNCHBOX
+          </h3>
+          <div id="present-old-lunchbox" class="bg-slate-50 border-2 border-slate-300 rounded-2xl p-4">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="card-storybook bg-emerald-50 p-5">
+          <h3 class="font-display text-xl sm:text-2xl font-bold text-emerald-950 mb-3 flex items-center gap-2">
+            <span>🍱</span> NEW LUNCHBOX
+          </h3>
+          <div id="present-new-lunchbox" class="bg-white border-2 border-emerald-400 rounded-2xl p-4">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ORAL PRESENTATION SCRIPT & PEER FEEDBACK -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Oral Presentation Script (Large Readable Smartboard Text) -->
+        <div class="card-storybook bg-sky-50 p-5 sm:p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-3xl">🎤</span>
+            <h3 class="font-display text-2xl font-bold text-slate-900">
+              Read &amp; Present!
+            </h3>
+          </div>
+
+          <div id="oral-script-box" class="bg-white border-3 border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3 text-xl sm:text-2xl font-display font-bold text-slate-900 leading-relaxed">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- One Star and One Wish Peer Feedback -->
+        <div class="card-storybook bg-amber-50 p-5 sm:p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-3xl">🌟</span>
+              <h3 class="font-display text-2xl font-bold text-slate-900">
+                One Star &amp; One Wish
+              </h3>
+            </div>
+
+            <!-- One Star -->
+            <div class="mb-4">
+              <label for="peer-star-input" class="block font-display font-bold text-lg text-amber-900 mb-1">
+                ⭐ One thing I like:
+              </label>
+              <input
+                id="peer-star-input"
+                type="text"
+                placeholder="Tap a starter below or write here..."
+                class="w-full bg-white border-2 border-slate-800 rounded-xl px-3.5 py-2 text-base font-bold text-slate-900 mb-2"
+              />
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="fillPeerInput('peer-star-input', 'I like your healthy new lunchbox!')" class="text-xs sm:text-sm font-bold bg-white hover:bg-amber-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "I like your healthy new lunchbox!"
+                </button>
+                <button type="button" onclick="fillPeerInput('peer-star-input', 'You used clear advice sentences!')" class="text-xs sm:text-sm font-bold bg-white hover:bg-amber-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "You used clear advice sentences!"
+                </button>
+                <button type="button" onclick="fillPeerInput('peer-star-input', 'You spoke loudly and clearly!')" class="text-xs sm:text-sm font-bold bg-white hover:bg-amber-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "You spoke loudly and clearly!"
+                </button>
+              </div>
+            </div>
+
+            <!-- One Wish -->
+            <div>
+              <label for="peer-wish-input" class="block font-display font-bold text-lg text-pink-900 mb-1">
+                🪄 One thing to improve:
+              </label>
+              <input
+                id="peer-wish-input"
+                type="text"
+                placeholder="Tap a starter below or write here..."
+                class="w-full bg-white border-2 border-slate-800 rounded-xl px-3.5 py-2 text-base font-bold text-slate-900 mb-2"
+              />
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="fillPeerInput('peer-wish-input', 'You can add some fruit on the side.')" class="text-xs sm:text-sm font-bold bg-white hover:bg-pink-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "You can add some fruit on the side."
+                </button>
+                <button type="button" onclick="fillPeerInput('peer-wish-input', 'Remember to look at the class when speaking.')" class="text-xs sm:text-sm font-bold bg-white hover:bg-pink-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "Remember to look at the class when speaking."
+                </button>
+                <button type="button" onclick="fillPeerInput('peer-wish-input', 'Great job — nothing to change!')" class="text-xs sm:text-sm font-bold bg-white hover:bg-pink-200 border border-slate-800 px-2.5 py-1 rounded-full">
+                  + "Great job — nothing to change!"
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 4 BOTTOM NAVIGATION BUTTONS -->
+      <div class="flex flex-wrap items-center justify-center gap-4 pt-2 pb-4">
+        <button onclick="tryAgainCurrentMission()" class="btn-chunky bg-sky-300 hover:bg-sky-400 text-slate-900 font-display font-bold text-xl px-7 py-3.5 rounded-2xl border-3 border-slate-800 flex items-center gap-2">
+          <span>🔄</span>
+          <span>TRY AGAIN</span>
+        </button>
+
+        <button onclick="openFinalLunchboxModal()" class="btn-chunky bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-display font-bold text-xl px-7 py-3.5 rounded-2xl border-3 border-slate-800 flex items-center gap-2">
+          <span>🍱</span>
+          <span>SHOW FINAL LUNCHBOX</span>
+        </button>
+
+        <button onclick="goHome()" class="btn-chunky bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-bold text-xl px-7 py-3.5 rounded-2xl border-3 border-slate-800 flex items-center gap-2">
+          <span>🏠</span>
+          <span>BACK TO HOME</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Food Bank Definition (Textbook "Types of food" vocabulary with custom SVG artwork & categories)
+    const FOOD_ITEMS = [
+      {
+        id: 'rice',
+        name: 'rice',
+        category: 'grains',
+        countable: 'uncountable',
+        color: 'bg-amber-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M16 32 Q32 14 48 32 Z" fill="#FFFFFF" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="26" cy="26" r="1.5" fill="#CBD5E1"/><circle cx="34" cy="24" r="1.5" fill="#CBD5E1"/><circle cx="39" cy="28" r="1.5" fill="#CBD5E1"/>
+                <path d="M12 32 H52 L46 48 Q32 53 18 48 Z" fill="#38BDF8" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+              </svg>`
+      },
+      {
+        id: 'noodles',
+        name: 'noodles',
+        category: 'grains',
+        countable: 'plural',
+        color: 'bg-amber-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M18 32 Q24 18 32 28 T46 32" fill="none" stroke="#FACC15" stroke-width="4" stroke-linecap="round"/>
+                <path d="M16 35 Q26 23 34 32 T48 35" fill="none" stroke="#EAB308" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M12 34 H52 L46 49 Q32 54 18 49 Z" fill="#FB7185" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+                <line x1="22" y1="14" x2="48" y2="22" stroke="#92400E" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="22" y1="19" x2="48" y2="25" stroke="#92400E" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'macaroni',
+        name: 'macaroni',
+        category: 'grains',
+        countable: 'uncountable',
+        color: 'bg-amber-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M12 34 H52 L46 49 Q32 54 18 49 Z" fill="#F97316" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M20 31 C20 22, 29 22, 29 31" fill="none" stroke="#FACC15" stroke-width="5" stroke-linecap="round"/>
+                <path d="M29 32 C29 21, 38 21, 38 32" fill="none" stroke="#FDE047" stroke-width="5" stroke-linecap="round"/>
+                <path d="M36 31 C36 23, 45 23, 45 31" fill="none" stroke="#FACC15" stroke-width="5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'spaghetti',
+        name: 'spaghetti',
+        category: 'grains',
+        countable: 'uncountable',
+        color: 'bg-amber-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <ellipse cx="32" cy="42" rx="22" ry="9" fill="#E2E8F0" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M18 39 Q26 24 34 38 T46 39" fill="none" stroke="#FACC15" stroke-width="4" stroke-linecap="round"/>
+                <path d="M20 42 Q30 27 42 41" fill="none" stroke="#EAB308" stroke-width="3.5" stroke-linecap="round"/>
+                <circle cx="32" cy="32" r="6" fill="#EF4444" stroke="#2B2D42" stroke-width="2"/>
+              </svg>`
+      },
+      {
+        id: 'chicken',
+        name: 'chicken',
+        category: 'meat',
+        countable: 'uncountable',
+        color: 'bg-rose-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <rect x="36" y="29" width="16" height="6" rx="2" fill="#FEF3C7" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="52" cy="29" r="3.5" fill="#FEF3C7" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="52" cy="35" r="3.5" fill="#FEF3C7" stroke="#2B2D42" stroke-width="2.5"/>
+                <ellipse cx="26" cy="32" rx="16" ry="12" fill="#F59E0B" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M18 27 Q24 24 29 27" fill="none" stroke="#FEF3C7" stroke-width="2" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'beef',
+        name: 'beef',
+        category: 'meat',
+        countable: 'uncountable',
+        color: 'bg-rose-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M14 34 C14 20, 48 18, 50 32 C52 44, 16 46, 14 34 Z" fill="#B91C1C" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M22 29 L28 36 M32 27 L38 35" stroke="#FCA5A5" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'pork',
+        name: 'pork',
+        category: 'meat',
+        countable: 'uncountable',
+        color: 'bg-rose-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M16 34 C16 21, 46 20, 48 33 C50 44, 18 45, 16 34 Z" fill="#F472B6" stroke="#2B2D42" stroke-width="3"/>
+                <circle cx="38" cy="33" r="4" fill="#FFF1F2" stroke="#2B2D42" stroke-width="2"/>
+              </svg>`
+      },
+      {
+        id: 'steak',
+        name: 'steak',
+        category: 'meat',
+        countable: 'uncountable',
+        color: 'bg-rose-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M13 33 C13 19, 51 19, 51 34 C51 46, 13 46, 13 33 Z" fill="#7F1D1D" stroke="#2B2D42" stroke-width="3"/>
+                <line x1="22" y1="26" x2="28" y2="39" stroke="#2B2D42" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="30" y1="25" x2="36" y2="39" stroke="#2B2D42" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="38" y1="26" x2="43" y2="38" stroke="#2B2D42" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'fish',
+        name: 'fish',
+        category: 'meat',
+        countable: 'uncountable',
+        color: 'bg-rose-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M14 32 Q30 16 46 32 Q30 48 14 32 Z" fill="#60A5FA" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M45 32 L54 23 V41 Z" fill="#3B82F6" stroke="#2B2D42" stroke-width="2.5" stroke-linejoin="round"/>
+                <circle cx="22" cy="30" r="2.5" fill="#2B2D42"/>
+              </svg>`
+      },
+      {
+        id: 'broccoli',
+        name: 'broccoli',
+        category: 'vegetables',
+        countable: 'uncountable',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M27 34 L25 50 H39 L37 34 Z" fill="#86EFAC" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="22" cy="27" r="9" fill="#16A34A" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="42" cy="27" r="9" fill="#16A34A" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="32" cy="21" r="11" fill="#22C55E" stroke="#2B2D42" stroke-width="2.5"/>
+              </svg>`
+      },
+      {
+        id: 'lettuce',
+        name: 'lettuce',
+        category: 'vegetables',
+        countable: 'uncountable',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M16 38 Q14 20 32 18 Q50 20 48 38 Q42 50 32 48 Q22 50 16 38 Z" fill="#84CC16" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M24 44 Q28 30 32 24 M40 44 Q36 30 32 24" fill="none" stroke="#ECFCCB" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'carrots',
+        name: 'carrots',
+        category: 'vegetables',
+        countable: 'plural',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M40 16 L46 10 M42 18 L50 16 M38 15 L40 8" stroke="#16A34A" stroke-width="3" stroke-linecap="round"/>
+                <path d="M36 16 L44 24 L18 50 C15 52, 12 49, 14 46 Z" fill="#F97316" stroke="#2B2D42" stroke-width="2.5" stroke-linejoin="round"/>
+                <line x1="28" y1="27" x2="32" y2="31" stroke="#2B2D42" stroke-width="2" stroke-linecap="round"/>
+                <line x1="22" y1="34" x2="25" y2="37" stroke="#2B2D42" stroke-width="2" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'peas',
+        name: 'peas',
+        category: 'vegetables',
+        countable: 'plural',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M14 42 Q32 52 50 22 Q30 22 14 42 Z" fill="#16A34A" stroke="#2B2D42" stroke-width="2.8"/>
+                <circle cx="24" cy="38" r="4.5" fill="#86EFAC" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="33" cy="33" r="4.5" fill="#86EFAC" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="42" cy="27" r="4.5" fill="#86EFAC" stroke="#2B2D42" stroke-width="2"/>
+              </svg>`
+      },
+      {
+        id: 'potatoes',
+        name: 'potatoes',
+        category: 'vegetables',
+        countable: 'plural',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <ellipse cx="27" cy="34" rx="13" ry="10" transform="rotate(-15 27 34)" fill="#D97706" stroke="#2B2D42" stroke-width="2.8"/>
+                <ellipse cx="40" cy="38" rx="12" ry="9" transform="rotate(15 40 38)" fill="#F59E0B" stroke="#2B2D42" stroke-width="2.8"/>
+                <circle cx="24" cy="32" r="1.3" fill="#78350F"/><circle cx="42" cy="37" r="1.3" fill="#78350F"/>
+              </svg>`
+      },
+      {
+        id: 'tomatoes',
+        name: 'tomatoes',
+        category: 'vegetables',
+        countable: 'plural',
+        color: 'bg-emerald-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <circle cx="32" cy="35" r="16" fill="#EF4444" stroke="#2B2D42" stroke-width="3"/>
+                <path d="M32 19 L27 14 M32 19 L37 14 M32 19 L24 21 M32 19 L40 21" stroke="#15803D" stroke-width="3" stroke-linecap="round"/>
+                <path d="M23 29 Q25 25 29 25" fill="none" stroke="#FCA5A5" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>`
+      },
+      {
+        id: 'cherries',
+        name: 'cherries',
+        category: 'fruit',
+        countable: 'plural',
+        color: 'bg-purple-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M23 36 Q28 20 38 14 Q41 24 42 38" fill="none" stroke="#15803D" stroke-width="2.8" stroke-linecap="round"/>
+                <path d="M38 14 Q46 12 48 18 Q41 20 38 14 Z" fill="#22C55E" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="22" cy="42" r="8.5" fill="#DC2626" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="42" cy="44" r="8.5" fill="#E11D48" stroke="#2B2D42" stroke-width="2.5"/>
+              </svg>`
+      },
+      {
+        id: 'grapes',
+        name: 'grapes',
+        category: 'fruit',
+        countable: 'plural',
+        color: 'bg-purple-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M32 12 V19" stroke="#15803D" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="26" cy="24" r="6" fill="#9333EA" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="38" cy="24" r="6" fill="#9333EA" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="22" cy="34" r="6" fill="#A855F7" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="32" cy="34" r="6" fill="#7E22CE" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="42" cy="34" r="6" fill="#A855F7" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="27" cy="44" r="6" fill="#9333EA" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="37" cy="44" r="6" fill="#9333EA" stroke="#2B2D42" stroke-width="2"/>
+                <circle cx="32" cy="52" r="5.5" fill="#7E22CE" stroke="#2B2D42" stroke-width="2"/>
+              </svg>`
+      },
+      {
+        id: 'lychees',
+        name: 'lychees',
+        category: 'fruit',
+        countable: 'plural',
+        color: 'bg-purple-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M26 24 Q32 14 40 22" fill="none" stroke="#15803D" stroke-width="2.5"/>
+                <circle cx="25" cy="36" r="10" fill="#F43F5E" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="41" cy="39" r="9.5" fill="#FB7185" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="23" cy="34" r="1.2" fill="#881337"/><circle cx="28" cy="38" r="1.2" fill="#881337"/>
+                <circle cx="39" cy="37" r="1.2" fill="#881337"/><circle cx="43" cy="41" r="1.2" fill="#881337"/>
+              </svg>`
+      },
+      {
+        id: 'longans',
+        name: 'longans',
+        category: 'fruit',
+        countable: 'plural',
+        color: 'bg-purple-50',
+        svg: `<svg viewBox="0 0 64 64" class="w-16 h-16 mx-auto">
+                <path d="M32 14 L25 27 M32 14 L40 28 M32 14 L32 35" stroke="#78350F" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="24" cy="32" r="7.5" fill="#D97706" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="41" cy="33" r="7.5" fill="#B45309" stroke="#2B2D42" stroke-width="2.5"/>
+                <circle cx="32" cy="42" r="7.5" fill="#F59E0B" stroke="#2B2D42" stroke-width="2.5"/>
+              </svg>`
+      }
+    ];
+
+    // Noun countability dictionary matching Textbook p.22 "Language focus" & "Practice 1"
+    const PLURAL_COUNTABLE_NOUNS = [
+      'sweets', 'chips', 'fries', 'biscuits', 'cookies', 'cakes', 'burgers',
+      'noodles', 'carrots', 'tomatoes', 'peas', 'potatoes', 'cherries', 'grapes',
+      'lychees', 'longans', 'apples', 'bananas', 'oranges', 'eggs', 'vegetables',
+      'snacks', 'soft drinks', 'drinks'
+    ];
+
+    const UNCOUNTABLE_NOUNS = [
+      'rice', 'macaroni', 'spaghetti', 'pasta', 'meat', 'chicken', 'beef', 'pork',
+      'steak', 'fish', 'broccoli', 'lettuce', 'fruit', 'sugar', 'salt', 'oil',
+      'fat', 'junk food', 'fast food', 'chocolate', 'ice cream', 'water', 'juice',
+      'milk', 'soup', 'bread'
+    ];
+
+    // Application State
+    const state = {
+      character: null, // 'paul' | 'pippa'
+      selectedFoodId: null, // For tap-to-place accessibility
+      lunchbox: {
+        grains: [],
+        vegetables: [],
+        meat: [],
+        fruit: []
+      }
+    };
+
+    /**
+     * Initialize Food Bank UI on page load
+     */
+    function initFoodBank() {
+      const grid = document.getElementById('food-bank-grid');
+      grid.innerHTML = '';
+
+      FOOD_ITEMS.forEach(item => {
+        const card = document.createElement('div');
+        card.id = `food-card-${item.id}`;
+        card.draggable = true;
+        card.className = `food-card ${item.color} rounded-2xl p-2.5 text-center flex flex-col items-center justify-between select-none`;
+        card.innerHTML = `
+          ${item.svg}
+          <span class="font-display font-bold text-base sm:text-lg text-slate-900 mt-1 leading-tight">${item.name}</span>
+        `;
+
+        // Drag events
+        card.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', item.id);
+          selectFoodForTap(item.id, false);
+        });
+
+        // Touch / Click fallback
+        card.addEventListener('click', () => {
+          selectFoodForTap(item.id, true);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    /**
+     * Navigate to Screen 1 (Welcome)
+     */
+    function goHome() {
+      state.character = null;
+      state.selectedFoodId = null;
+      document.getElementById('screen-welcome').classList.remove('hidden');
+      document.getElementById('screen-mission').classList.add('hidden');
+      document.getElementById('screen-present').classList.add('hidden');
+      document.getElementById('nav-home-btn').classList.add('hidden');
+      document.getElementById('step-badge').classList.add('hidden');
+      hideToast();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Start Mission for Student A (Paul) or Student B (Pippa)
+     */
+    function startMission(character) {
+      state.character = character;
+      state.selectedFoodId = null;
+      state.lunchbox = { grains: [], vegetables: [], meat: [], fruit: [] };
+
+      // Reset inputs
+      ['paul-q1', 'paul-q2', 'paul-q3', 'paul-q4', 'pippa-q1', 'pippa-q2', 'pippa-q3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('challenge-input').value = '';
+      document.getElementById('peer-star-input').value = '';
+      document.getElementById('peer-wish-input').value = '';
+
+      // Show Mission Screen
+      document.getElementById('screen-welcome').classList.add('hidden');
+      document.getElementById('screen-present').classList.add('hidden');
+      document.getElementById('screen-mission').classList.remove('hidden');
+      document.getElementById('nav-home-btn').classList.remove('hidden');
+
+      const stepBadge = document.getElementById('step-badge');
+      const stepBadgeText = document.getElementById('step-badge-text');
+      stepBadge.classList.remove('hidden');
+
+      if (character === 'paul') {
+        stepBadgeText.textContent = 'Groups 1–3: Paul Pig';
+        setupPaulScreen();
+      } else {
+        stepBadgeText.textContent = 'Groups 4–6: Pippa Pig';
+        setupPippaScreen();
+      }
+
+      renderNewLunchbox();
+      clearFoodSelection();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Configure Screen 2 for Paul Pig
+     */
+    function setupPaulScreen() {
+      document.getElementById('mission-student-tag').textContent = 'GROUPS 1–3 — PAUL PIG';
+      document.getElementById('mission-student-tag').className = 'bg-sky-300 border-2 border-slate-800 px-3 py-0.5 rounded-full font-display font-bold text-sm';
+
+      document.getElementById('mission-avatar-box').innerHTML = `
+        <div class="w-28 h-28 rounded-3xl bg-sky-100 border-3 border-slate-800 flex items-center justify-center">
+          <svg viewBox="0 0 120 120" class="w-24 h-24">
+            <path d="M28 42 L18 18 L44 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M92 42 L102 18 L76 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="60" cy="64" r="38" fill="#FFA6C1" stroke="#2B2D42" stroke-width="4"/>
+            <circle cx="45" cy="54" r="11" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+            <circle cx="75" cy="54" r="11" fill="#FFFFFF" stroke="#2B2D42" stroke-width="3.5"/>
+            <line x1="56" y1="54" x2="64" y2="54" stroke="#2B2D42" stroke-width="3.5"/>
+            <circle cx="46" cy="54" r="4" fill="#2B2D42"/>
+            <circle cx="74" cy="54" r="4" fill="#2B2D42"/>
+            <ellipse cx="60" cy="74" rx="15" ry="11" fill="#FF7597" stroke="#2B2D42" stroke-width="3.5"/>
+            <circle cx="55" cy="74" r="3" fill="#2B2D42"/>
+            <circle cx="65" cy="74" r="3" fill="#2B2D42"/>
+            <path d="M51 89 Q60 96 69 89" fill="none" stroke="#2B2D42" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="mt-2 font-display font-bold text-lg text-slate-900">Paul Pig</span>
+      `;
+
+      document.getElementById('paul-reading-card').classList.remove('hidden');
+      document.getElementById('pippa-reading-card').classList.add('hidden');
+
+      // Completed Model for Paul (a few & a little highlighted, NOT tested again)
+      document.getElementById('model-sentence-box').innerHTML = `
+        <p class="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+          "You ate <span class="bg-emerald-200 border-b-4 border-emerald-500 px-1.5 rounded">a few</span> vegetables and <span class="bg-purple-200 border-b-4 border-purple-500 px-1.5 rounded">a little</span> fruit."
+        </p>
+      `;
+
+      // Paul's Exact Old Lunchbox Visual (half a tomato, 4 peas, 1 baby carrot, 2 cherries, 3 grapes; NO rice or meat)
+      document.getElementById('old-lunchbox-visual').innerHTML = getPaulOldLunchboxHTML();
+      document.getElementById('old-lunchbox-caption').textContent = 'Only half a tomato, 4 peas, 1 baby carrot, 2 cherries & 3 grapes. No rice or meat!';
+
+      document.getElementById('advice-heading').textContent = 'Give Paul Pig advice!';
+      document.getElementById('paul-advice-form').classList.remove('hidden');
+      document.getElementById('pippa-advice-form').classList.add('hidden');
+    }
+
+    /**
+     * Configure Screen 3 for Pippa Pig
+     */
+    function setupPippaScreen() {
+      document.getElementById('mission-student-tag').textContent = 'GROUPS 4–6 — PIPPA PIG';
+      document.getElementById('mission-student-tag').className = 'bg-pink-300 border-2 border-slate-800 px-3 py-0.5 rounded-full font-display font-bold text-sm';
+
+      document.getElementById('mission-avatar-box').innerHTML = `
+        <div class="w-28 h-28 rounded-3xl bg-pink-100 border-3 border-slate-800 flex items-center justify-center">
+          <svg viewBox="0 0 120 120" class="w-24 h-24">
+            <path d="M28 42 L18 18 L44 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M92 42 L102 18 L76 30 Z" fill="#FF7597" stroke="#2B2D42" stroke-width="4" stroke-linejoin="round"/>
+            <circle cx="60" cy="64" r="38" fill="#FFA6C1" stroke="#2B2D42" stroke-width="4"/>
+            <path d="M74 26 L88 18 L86 34 Z" fill="#FFD166" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M74 26 L62 16 L60 32 Z" fill="#FFD166" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="74" cy="26" r="4.5" fill="#FF5D8F" stroke="#2B2D42" stroke-width="2.5"/>
+            <circle cx="46" cy="54" r="4.5" fill="#2B2D42"/>
+            <circle cx="74" cy="54" r="4.5" fill="#2B2D42"/>
+            <ellipse cx="60" cy="74" rx="15" ry="11" fill="#FF7597" stroke="#2B2D42" stroke-width="3.5"/>
+            <circle cx="55" cy="74" r="3" fill="#2B2D42"/>
+            <circle cx="65" cy="74" r="3" fill="#2B2D42"/>
+            <path d="M51 89 Q60 96 69 89" fill="none" stroke="#2B2D42" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="mt-2 font-display font-bold text-lg text-slate-900">Pippa Pig</span>
+      `;
+
+      document.getElementById('paul-reading-card').classList.add('hidden');
+      document.getElementById('pippa-reading-card').classList.remove('hidden');
+
+      // Completed Model for Pippa (a lot of highlighted, NOT tested again)
+      document.getElementById('model-sentence-box').innerHTML = `
+        <p class="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+          "You ate <span class="bg-emerald-200 border-b-4 border-emerald-500 px-1.5 rounded">a lot of</span> vegetables."
+        </p>
+      `;
+
+      // Pippa's Old Lunchbox Visual (a lot of broccoli & lettuce, small chicken, some noodles)
+      document.getElementById('old-lunchbox-visual').innerHTML = getPippaOldLunchboxHTML();
+      document.getElementById('old-lunchbox-caption').textContent = 'A lot of broccoli & lettuce, only a little chicken, and some noodles.';
+
+      document.getElementById('advice-heading').textContent = 'Give Pippa Pig advice!';
+      document.getElementById('paul-advice-form').classList.add('hidden');
+      document.getElementById('pippa-advice-form').classList.remove('hidden');
+    }
+
+    /**
+     * Exact HTML representation of Paul's Old Lunchbox
+     */
+    function getPaulOldLunchboxHTML() {
+      return `
+        <div class="grid grid-cols-2 gap-2.5">
+          <div class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-2.5 text-center">
+            <div class="text-xs font-extrabold text-emerald-800 uppercase mb-1">A few vegetables</div>
+            <svg viewBox="0 0 110 60" class="w-full h-14 mx-auto">
+              <!-- Half a tomato -->
+              <path d="M12 36 A14 14 0 0 1 40 36 Z" fill="#EF4444" stroke="#2B2D42" stroke-width="2"/>
+              <path d="M26 22 L23 17 M26 22 L29 17" stroke="#15803D" stroke-width="2" stroke-linecap="round"/>
+              <!-- Four peas -->
+              <circle cx="52" cy="34" r="4.5" fill="#22C55E" stroke="#2B2D42" stroke-width="1.5"/>
+              <circle cx="63" cy="30" r="4.5" fill="#22C55E" stroke="#2B2D42" stroke-width="1.5"/>
+              <circle cx="62" cy="40" r="4.5" fill="#22C55E" stroke="#2B2D42" stroke-width="1.5"/>
+              <circle cx="73" cy="35" r="4.5" fill="#22C55E" stroke="#2B2D42" stroke-width="1.5"/>
+              <!-- One baby carrot -->
+              <path d="M95 16 L100 11 M97 18 L103 16" stroke="#15803D" stroke-width="2" stroke-linecap="round"/>
+              <path d="M92 16 L98 22 L83 42 C81 44, 79 42, 80 40 Z" fill="#F97316" stroke="#2B2D42" stroke-width="1.8"/>
+            </svg>
+            <div class="text-xs font-bold text-slate-700 leading-tight mt-1">
+              • half a tomato<br/>• four peas<br/>• a baby carrot
+            </div>
+          </div>
+
+          <div class="bg-purple-50 border-2 border-purple-300 rounded-xl p-2.5 text-center">
+            <div class="text-xs font-extrabold text-purple-800 uppercase mb-1">A little fruit</div>
+            <svg viewBox="0 0 110 60" class="w-full h-14 mx-auto">
+              <!-- Two cherries -->
+              <path d="M22 32 Q26 18 33 14 Q36 22 36 33" fill="none" stroke="#15803D" stroke-width="2"/>
+              <circle cx="21" cy="37" r="6.5" fill="#DC2626" stroke="#2B2D42" stroke-width="1.8"/>
+              <circle cx="36" cy="38" r="6.5" fill="#E11D48" stroke="#2B2D42" stroke-width="1.8"/>
+              <!-- Three grapes -->
+              <circle cx="68" cy="28" r="6.5" fill="#9333EA" stroke="#2B2D42" stroke-width="1.8"/>
+              <circle cx="82" cy="28" r="6.5" fill="#A855F7" stroke="#2B2D42" stroke-width="1.8"/>
+              <circle cx="75" cy="40" r="6.5" fill="#7E22CE" stroke="#2B2D42" stroke-width="1.8"/>
+            </svg>
+            <div class="text-xs font-bold text-slate-700 leading-tight mt-1">
+              • two cherries<br/>• three grapes
+            </div>
+          </div>
+        </div>
+        <div class="mt-2.5 grid grid-cols-2 gap-2 text-center text-xs font-extrabold">
+          <div class="bg-slate-100 border border-dashed border-slate-400 rounded-lg py-1.5 text-slate-500">
+            Rice / Noodles: None
+          </div>
+          <div class="bg-slate-100 border border-dashed border-slate-400 rounded-lg py-1.5 text-slate-500">
+            Meat: None
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * Exact HTML representation of Pippa's Old Lunchbox
+     */
+    function getPippaOldLunchboxHTML() {
+      return `
+        <div class="space-y-2">
+          <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl p-2 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-extrabold text-emerald-900 uppercase block">Vegetables (A lot!)</span>
+              <span class="text-xs font-bold text-slate-700">Lots of broccoli &amp; lettuce</span>
+            </div>
+            <div class="text-2xl">🥦🥬🥦🥬</div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-2 text-center">
+              <span class="text-xs font-extrabold text-amber-900 uppercase block">Noodles</span>
+              <div class="text-xl my-0.5">🍜</div>
+              <span class="text-xs font-bold text-slate-700">Some noodles</span>
+            </div>
+            <div class="bg-rose-50 border-2 border-rose-300 rounded-xl p-2 text-center">
+              <span class="text-xs font-extrabold text-rose-900 uppercase block">Chicken</span>
+              <div class="text-xl my-0.5">🍗</div>
+              <span class="text-xs font-bold text-slate-700">Small amount</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * DRAG-AND-DROP & TAP-TO-PLACE LUNCHBOX CONTROLS
+     * ============================================================================
+     */
+
+    function selectFoodForTap(foodId, showFeedbackToast = true) {
+      if (state.selectedFoodId === foodId) {
+        clearFoodSelection();
+        return;
+      }
+      state.selectedFoodId = foodId;
+
+      // Update visual highlight on food bank cards
+      document.querySelectorAll('.food-card').forEach(el => el.classList.remove('selected-food'));
+      const activeCard = document.getElementById(`food-card-${foodId}`);
+      if (activeCard) activeCard.classList.add('selected-food');
+
+      // Highlight drop zones to guide touch learners
+      document.querySelectorAll('.drop-zone').forEach(z => z.classList.add('tap-ready'));
+
+      const food = FOOD_ITEMS.find(f => f.id === foodId);
+      const statusEl = document.getElementById('selected-food-status');
+      if (food && statusEl) {
+        statusEl.textContent = `Selected: "${food.name}" — Now tap a box above!`;
+        statusEl.className = 'text-xs sm:text-sm font-extrabold text-rose-900 bg-amber-300 border border-slate-800 px-3 py-1 rounded-full';
+      }
+    }
+
+    function clearFoodSelection() {
+      state.selectedFoodId = null;
+      document.querySelectorAll('.food-card').forEach(el => el.classList.remove('selected-food'));
+      document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('tap-ready'));
+      const statusEl = document.getElementById('selected-food-status');
+      if (statusEl) {
+        statusEl.textContent = 'Tap a food card to select it, or drag it!';
+        statusEl.className = 'text-xs sm:text-sm font-extrabold text-sky-900 bg-sky-200 px-3 py-1 rounded-full';
+      }
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetZone) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const foodId = e.dataTransfer.getData('text/plain') || state.selectedFoodId;
+      if (foodId) {
+        placeFoodInZone(foodId, targetZone);
+      }
+    }
+
+    function handleZoneTap(targetZone) {
+      if (!state.selectedFoodId) {
+        showToast('First tap a food card in the Food Bank below, then tap this box!', '👆');
+        return;
+      }
+      placeFoodInZone(state.selectedFoodId, targetZone);
+    }
+
+    /**
+     * Place food into the target zone with gentle, clear category & 3-2-1 portion limit guidance
+     */
+    function placeFoodInZone(foodId, targetZone) {
+      const food = FOOD_ITEMS.find(f => f.id === foodId);
+      if (!food) return;
+
+      // Check if food matches the Smart Lunch 3-2-1 section
+      if (food.category !== targetZone) {
+        const zoneLabels = {
+          grains: '3: Rice / Noodles',
+          vegetables: '2: Vegetables',
+          meat: '1: Meat',
+          fruit: 'Side Portion: Fruit'
+        };
+        showToast(
+          `Oops! "${food.name}" belongs in "${zoneLabels[food.category]}". Try putting it there!`,
+          '🤔'
+        );
+        return;
+      }
+
+      // Enforce Smart Lunch 3-2-1 limits: grains max 3, vegetables max 2, meat max 1, fruit max 2
+      const zoneLimits = {
+        grains: { max: 3, label: 'Rice / Noodles (3)' },
+        vegetables: { max: 2, label: 'Vegetables (2)' },
+        meat: { max: 1, label: 'Meat (1)' },
+        fruit: { max: 2, label: 'Fruit Side Cup' }
+      };
+      const limitInfo = zoneLimits[targetZone];
+
+      if (state.lunchbox[targetZone].length >= limitInfo.max) {
+        showToast(
+          `Smart Lunch 3-2-1 rule: ${limitInfo.label} can hold at most ${limitInfo.max} item${limitInfo.max > 1 ? 's' : ''}! Tap an item inside to remove or replace it.`,
+          '🍱'
+        );
+        clearFoodSelection();
+        return;
+      }
+
+      state.lunchbox[targetZone].push(food.id);
+      clearFoodSelection();
+      renderNewLunchbox();
+    }
+
+    /**
+     * Remove an item from a lunchbox zone (allows pupils to remove or replace items)
+     */
+    function removeFoodFromZone(zone, index, event) {
+      if (event) event.stopPropagation();
+      state.lunchbox[zone].splice(index, 1);
+      renderNewLunchbox();
+    }
+
+    /**
+     * Reset all items in the new lunchbox
+     */
+    function resetNewLunchbox() {
+      state.lunchbox = { grains: [], vegetables: [], meat: [], fruit: [] };
+      clearFoodSelection();
+      renderNewLunchbox();
+      showToast('Lunchbox cleared! Ready to build again.', '🔄');
+    }
+
+    /**
+     * Render items inside each zone of the New Lunchbox
+     */
+    function renderNewLunchbox() {
+      const zones = ['grains', 'vegetables', 'meat', 'fruit'];
+      const maxCounts = { grains: 3, vegetables: 2, meat: 1 };
+
+      zones.forEach(zone => {
+        const container = document.getElementById(`items-${zone}`);
+        const hint = document.getElementById(`hint-${zone}`);
+        const items = state.lunchbox[zone];
+
+        // Update 3-2-1 counter badge if present
+        const countBadge = document.getElementById(`count-${zone}`);
+        if (countBadge && maxCounts[zone]) {
+          countBadge.textContent = `${items.length} / ${maxCounts[zone]}`;
+        }
+
+        container.innerHTML = '';
+        if (items.length === 0) {
+          hint.classList.remove('hidden');
+        } else {
+          hint.classList.add('hidden');
+          const count = items.length;
+
+          items.forEach((foodId, idx) => {
+            const food = FOOD_ITEMS.find(f => f.id === foodId);
+            if (!food) return;
+
+            // Side fruit cup keeps compact pill style; 3-2-1 main compartments expand to fill the whole compartment!
+            if (zone === 'fruit') {
+              const chip = document.createElement('button');
+              chip.type = 'button';
+              chip.title = `Tap to remove ${food.name}`;
+              chip.className = 'bg-white border-2 border-slate-800 rounded-xl px-2.5 py-1 flex items-center gap-1.5 shadow-xs hover:bg-rose-50 transition group';
+              chip.innerHTML = `
+                <span class="w-8 h-8 inline-block shrink-0">${food.svg.replace('w-16 h-16', 'w-8 h-8')}</span>
+                <span class="font-display font-bold text-sm text-slate-900">${food.name}</span>
+                <span class="ml-0.5 w-5 h-5 rounded-full bg-rose-200 group-hover:bg-rose-400 text-slate-900 text-xs font-extrabold flex items-center justify-center">✕</span>
+              `;
+              chip.onclick = (e) => removeFoodFromZone(zone, idx, e);
+              container.appendChild(chip);
+              return;
+            }
+
+            // Large portion sizing inside 3-2-1 compartments so 1 dish fills the entire compartment
+            let svgSizeClass = 'w-24 h-24 sm:w-28 sm:h-28';
+            if (zone === 'grains') {
+              svgSizeClass = count === 1 ? 'w-32 h-32 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24';
+            } else if (zone === 'vegetables') {
+              svgSizeClass = count === 1 ? 'w-24 h-24 sm:w-28 sm:h-28' : 'w-16 h-16 sm:w-20 sm:h-20';
+            } else if (zone === 'meat') {
+              svgSizeClass = count === 1 ? 'w-24 h-24 sm:w-28 sm:h-28' : 'w-16 h-16 sm:w-20 sm:h-20';
+            }
+
+            const dishTile = document.createElement('button');
+            dishTile.type = 'button';
+            dishTile.title = `Tap to remove ${food.name}`;
+            dishTile.className = 'relative flex-1 w-full h-full min-h-[72px] bg-white/95 border-2 border-slate-800 rounded-2xl p-1.5 flex flex-col items-center justify-center shadow-sm hover:bg-rose-50 transition group';
+            dishTile.innerHTML = `
+              <span class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-200 group-hover:bg-rose-400 border border-slate-800 text-slate-900 text-xs font-extrabold flex items-center justify-center">✕</span>
+              <div class="flex items-center justify-center">${food.svg.replace('w-16 h-16', svgSizeClass)}</div>
+              <span class="font-display font-bold text-sm sm:text-base text-slate-900 leading-none mt-0.5">${food.name}</span>
+            `;
+            dishTile.onclick = (e) => removeFoodFromZone(zone, idx, e);
+            container.appendChild(dishTile);
+          });
+        }
+      });
+    }
+
+    /**
+     * ============================================================================
+     * DETERMINISTIC EVALUATION & PRESENTATION GENERATOR (SCREEN 4)
+     * ============================================================================
+     */
+
+    function checkMyLunchbox() {
+      const char = state.character;
+      if (!char) return;
+
+      // 1. Check Lunchbox Key Food Groups (Smart Lunch 3-2-1)
+      // Note: Do NOT reject a lunch solely because it has additional fruit!
+      const hasGrains = state.lunchbox.grains.length > 0;
+      const hasVeggies = state.lunchbox.vegetables.length > 0;
+      const hasMeat = state.lunchbox.meat.length > 0;
+      const hasFruit = state.lunchbox.fruit.length > 0;
+
+      const missingGroups = [];
+      if (!hasGrains) missingGroups.push('rice or noodles (3)');
+      if (!hasVeggies) missingGroups.push('vegetables (2)');
+      if (!hasMeat) missingGroups.push('meat (1)');
+
+      const lunchboxOK = missingGroups.length === 0;
+
+      // 2. Check Character-Specific Advice Sentences
+      let adviceItems = [];
+      if (char === 'paul') {
+        const q1 = document.getElementById('paul-q1').value;
+        const q2 = document.getElementById('paul-q2').value;
+        const q3 = document.getElementById('paul-q3').value;
+        const q4 = document.getElementById('paul-q4').value;
+
+        adviceItems = [
+          {
+            sentence: `You need to eat ${q1 || '___'} rice.`,
+            selected: q1,
+            expected: 'more',
+            noun: 'rice',
+            reason: 'Paul ate no rice at lunchtime, so he needs to eat more rice.'
+          },
+          {
+            sentence: `You need to eat ${q2 || '___'} meat.`,
+            selected: q2,
+            expected: 'more',
+            noun: 'meat',
+            reason: 'Paul ate no meat at lunchtime, so he needs to eat more meat.'
+          },
+          {
+            sentence: `You need to eat ${q3 || '___'} vegetables.`,
+            selected: q3,
+            expected: 'more',
+            noun: 'vegetables',
+            reason: 'Paul only ate a few vegetables, so he needs to eat more vegetables.'
+          },
+          {
+            sentence: `You need to eat ${q4 || '___'} fruit.`,
+            selected: q4,
+            expected: 'more',
+            noun: 'fruit',
+            reason: 'Paul only ate a little fruit (two cherries and three grapes), so he needs to eat more fruit.'
+          }
+        ];
+      } else {
+        const q1 = document.getElementById('pippa-q1').value;
+        const q2 = document.getElementById('pippa-q2').value;
+        const q3 = document.getElementById('pippa-q3').value;
+
+        adviceItems = [
+          {
+            sentence: `You need to eat ${q1 || '___'} meat.`,
+            selected: q1,
+            expected: 'more',
+            noun: 'meat',
+            reason: 'Pippa only had a tiny piece of chicken, so she needs to eat more meat.'
+          },
+          {
+            sentence: `You need to eat ${q2 || '___'} vegetables.`,
+            selected: q2,
+            expected: 'fewer',
+            noun: 'vegetables',
+            reason: 'Pippa ate too many vegetables (a lot of broccoli and lettuce), so she needs to eat fewer vegetables.'
+          },
+          {
+            sentence: `You need to eat ${q3 || '___'} noodles.`,
+            selected: q3,
+            expected: 'more',
+            noun: 'noodles',
+            reason: 'Pippa only had some noodles, so she needs to eat more noodles.'
+          }
+        ];
+      }
+
+      // 3. Check Grammar Rules (fewer + plural countable; less + uncountable; more + either)
+      const grammarIssues = [];
+      adviceItems.forEach((item, idx) => {
+        if (!item.selected || (item.expected === 'optional' && !item.noun)) {
+          grammarIssues.push(`Sentence ${idx + 1}: Please choose a word in the dropdown.`);
+          return;
+        }
+        const gCheck = validateQuantifierNounPair(item.selected, item.noun);
+        if (!gCheck.valid) {
+          grammarIssues.push(`Sentence ${idx + 1}: ${gCheck.message}`);
+        }
+      });
+
+      // Also check optional "Challenge Me!" typed sentence if pupil wrote one
+      const challengeText = document.getElementById('challenge-input').value.trim();
+      let challengeFeedback = null;
+      if (challengeText.length > 0) {
+        challengeFeedback = validateTypedChallengeSentence(challengeText);
+        if (!challengeFeedback.valid) {
+          grammarIssues.push(`Challenge Sentence: ${challengeFeedback.message}`);
+        }
+      }
+
+      // Evaluate required advice correctness
+      const requiredItems = adviceItems.filter(i => i.expected !== 'optional');
+      const allRequiredAdviceCorrect = requiredItems.every(i => i.selected === i.expected);
+      const allGrammarValid = grammarIssues.length === 0;
+
+      // Render Screen 4 Feedback Cards
+      renderScreen4Feedback({
+        lunchboxOK,
+        missingGroups,
+        hasFruit,
+        adviceItems,
+        allRequiredAdviceCorrect,
+        allGrammarValid,
+        grammarIssues,
+        challengeText,
+        challengeFeedback
+      });
+
+      // Render Before & After Lunchboxes
+      document.getElementById('present-old-lunchbox').innerHTML =
+        char === 'paul' ? getPaulOldLunchboxHTML() : getPippaOldLunchboxHTML();
+      document.getElementById('present-new-lunchbox').innerHTML = getCompactNewLunchboxHTML();
+
+      // Render Oral Presentation Script
+      renderOralScript(adviceItems, challengeText, challengeFeedback);
+
+      // Switch to Screen 4
+      document.getElementById('screen-mission').classList.add('hidden');
+      document.getElementById('screen-present').classList.remove('hidden');
+      document.getElementById('step-badge-text').textContent = 'Step 4: Check & Present!';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Validate quantifier + noun grammar rules deterministically
+     */
+    function validateQuantifierNounPair(quantifier, noun) {
+      if (!quantifier || !noun) {
+        return { valid: false, message: 'Complete both parts of the sentence.' };
+      }
+      const cleanNoun = noun.toLowerCase().trim();
+
+      // "more" combines with both countable and uncountable food nouns
+      if (quantifier === 'more') {
+        return { valid: true, message: `"more ${noun}" is great grammar!` };
+      }
+
+      const isPlural = PLURAL_COUNTABLE_NOUNS.includes(cleanNoun);
+      const isUncountable = UNCOUNTABLE_NOUNS.includes(cleanNoun) || cleanNoun === 'rice or noodles';
+
+      if (quantifier === 'fewer') {
+        if (isPlural) {
+          return { valid: true, message: `"fewer ${noun}" is correct because "${noun}" is plural countable.` };
+        }
+        return {
+          valid: false,
+          message: `Try changing "fewer" to "less" before "${noun}" (or use a plural food like "sweets").`
+        };
+      }
+
+      if (quantifier === 'less') {
+        if (isUncountable) {
+          return { valid: true, message: `"less ${noun}" is correct because "${noun}" is uncountable.` };
+        }
+        return {
+          valid: false,
+          message: `Try changing "less" to "fewer" before "${noun}" because "${noun}" is plural countable.`
+        };
+      }
+
+      return { valid: true, message: '' };
+    }
+
+    /**
+     * Validate optional "Challenge Me!" typed sentence
+     */
+    function validateTypedChallengeSentence(sentence) {
+      const normalized = sentence.toLowerCase().replace(/[.!?]+$/, '').trim();
+      const match = normalized.match(/^you need to eat (more|fewer|less) ([a-z\s]+)$/);
+
+      if (!match) {
+        return {
+          valid: false,
+          message: 'Start with "You need to eat more / fewer / less + food."'
+        };
+      }
+
+      const quant = match[1];
+      const noun = match[2].trim();
+
+      if (quant === 'fewer' && UNCOUNTABLE_NOUNS.includes(noun)) {
+        return {
+          valid: false,
+          message: `Try changing "fewer" to "less" before "${noun}".`
+        };
+      }
+      if (quant === 'less' && PLURAL_COUNTABLE_NOUNS.includes(noun)) {
+        return {
+          valid: false,
+          message: `Try changing "less" to "fewer" before "${noun}".`
+        };
+      }
+
+      return {
+        valid: true,
+        message: 'Awesome Challenge sentence! Your grammar is spot-on!'
+      };
+    }
+
+    /**
+     * Populate Screen 4 feedback cards
+     */
+    function renderScreen4Feedback(res) {
+      const mainEmoji = document.getElementById('feedback-main-emoji');
+      const mainTitle = document.getElementById('feedback-main-title');
+      const mainSub = document.getElementById('feedback-main-subtitle');
+
+      if (res.lunchboxOK && res.allRequiredAdviceCorrect && res.allGrammarValid) {
+        mainEmoji.textContent = '🌟';
+        mainTitle.textContent = 'Great advice! Mr Grunt is proud of you!';
+        mainSub.textContent = 'Your Smart Lunch 3-2-1 and English sentences are super!';
+      } else {
+        mainEmoji.textContent = '💪';
+        mainTitle.textContent = 'Good try! Check Mr Grunt\'s tips below!';
+        mainSub.textContent = 'You can click "TRY AGAIN" to polish your lunchbox or words.';
+      }
+
+      // 1. Lunchbox Card
+      const lbText = document.getElementById('fb-text-lunchbox');
+      if (res.lunchboxOK) {
+        lbText.innerHTML = `✅ Great job! You included all three Smart Lunch 3-2-1 groups (rice/noodles, vegetables, and meat)${res.hasFruit ? ' plus healthy fruit on the side!' : '!'}`;
+      } else {
+        lbText.innerHTML = `💡 Almost there! Your new lunchbox still needs: <strong>${res.missingGroups.join(', ')}</strong>.`;
+      }
+
+      // 2. Story Advice Card
+      const advText = document.getElementById('fb-text-advice');
+      advText.innerHTML = res.adviceItems.map(item => {
+        if (item.expected === 'optional') {
+          return `<div class="bg-white/80 p-2 rounded-xl border border-sky-200">
+            ✨ <strong>${item.sentence}</strong><br/>
+            <span class="text-xs text-slate-600">${item.reason}</span>
+          </div>`;
+        }
+        const isRight = item.selected === item.expected;
+        return `<div class="bg-white/80 p-2 rounded-xl border ${isRight ? 'border-emerald-300' : 'border-rose-300'}">
+          ${isRight ? '✅' : '🔄'} <strong>${item.sentence}</strong><br/>
+          <span class="text-xs text-slate-700">${isRight ? item.reason : `Try changing this word to <strong>"${item.expected}"</strong>. ${item.reason}`}</span>
+        </div>`;
+      }).join('');
+
+      // 3. Grammar Card
+      const gramText = document.getElementById('fb-text-grammar');
+      if (res.allGrammarValid) {
+        gramText.innerHTML = `
+          <p>✅ Great advice! Your grammar with <strong>more / fewer / less</strong> is correct.</p>
+          ${res.challengeFeedback ? `<p class="text-emerald-800 bg-white/80 p-2 rounded-xl border border-emerald-300 mt-1">⭐ ${res.challengeFeedback.message}</p>` : ''}
+        `;
+      } else {
+        gramText.innerHTML = res.grammarIssues.map(msg => `
+          <p class="bg-white/90 p-2 rounded-xl border border-amber-400">💡 ${msg}</p>
+        `).join('');
+      }
+    }
+
+    /**
+     * Render concise Oral Presentation Script for P4 pupils
+     */
+    function renderOralScript(adviceItems, challengeText, challengeFeedback) {
+      const charName = state.character === 'paul' ? 'Paul' : 'Pippa';
+
+      // "You ate ..." summary based on exact textbook facts
+      const youAteLine = state.character === 'paul'
+        ? 'You ate <span class="text-emerald-700">a few vegetables</span> and <span class="text-purple-700">a little fruit</span>.'
+        : 'You ate <span class="text-emerald-700">a lot of vegetables</span>, <span class="text-amber-700">some noodles</span> and <span class="text-rose-700">a little chicken</span>.';
+
+      // "You need to eat ..." lines using completed advice
+      const adviceLines = adviceItems.map(item => {
+        const word = item.selected || item.expected;
+        const noun = item.noun || 'healthy food';
+        return `You need to eat <span class="underline decoration-pink-500 decoration-4 text-pink-700">${word}</span> ${noun}.`;
+      }).join('<br/>');
+
+      const extraChallengeLine = (challengeText && challengeFeedback && challengeFeedback.valid)
+        ? `<div class="text-amber-800 bg-amber-50 border border-amber-300 rounded-xl px-3 py-1.5 text-lg sm:text-xl">⭐ ${challengeText}</div>`
+        : '';
+
+      document.getElementById('oral-script-box').innerHTML = `
+        <p>👋 "Hello, <span class="text-sky-700">${charName}</span>!"</p>
+        <p>🍽️ "${youAteLine}"</p>
+        <p>💬 "${adviceLines}"</p>
+        ${extraChallengeLine}
+        <p>🍱 "Here is your new lunchbox!"</p>
+      `;
+    }
+
+    /**
+     * Build compact HTML view of the pupil's New Lunchbox (used on Screen 4 & Final Modal)
+     */
+    function getCompactNewLunchboxHTML() {
+      const renderZoneBadges = (zoneKey, bgClass, label) => {
+        const items = state.lunchbox[zoneKey];
+        const badges = items.length > 0
+          ? items.map(id => {
+              const f = FOOD_ITEMS.find(x => x.id === id);
+              return `<span class="inline-flex items-center gap-1.5 bg-white border-2 border-slate-800 rounded-xl px-2.5 py-1 text-sm sm:text-base font-bold">
+                <span class="w-7 h-7 inline-block">${f.svg.replace('w-16 h-16', 'w-7 h-7')}</span>
+                <span>${f.name}</span>
+              </span>`;
+            }).join('')
+          : `<span class="text-xs font-bold text-slate-500 italic">Empty</span>`;
+
+        return `
+          <div class="${bgClass} border-2 border-slate-800 rounded-xl p-2.5">
+            <div class="text-xs font-extrabold uppercase text-slate-800 mb-1.5">${label}</div>
+            <div class="flex flex-wrap gap-1.5">${badges}</div>
+          </div>
+        `;
+      };
+
+      return `
+        <div class="space-y-2 text-left">
+          ${renderZoneBadges('grains', 'bg-amber-100', '3 • Rice / Noodles (Largest)')}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${renderZoneBadges('vegetables', 'bg-emerald-100', '2 • Vegetables')}
+            ${renderZoneBadges('meat', 'bg-rose-100', '1 • Meat')}
+          </div>
+          ${renderZoneBadges('fruit', 'bg-purple-100', 'Side Portion • Fruit')}
+        </div>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * UI HELPERS & MODALS
+     * ============================================================================
+     */
+
+    function tryAgainCurrentMission() {
+      document.getElementById('screen-present').classList.add('hidden');
+      document.getElementById('screen-mission').classList.remove('hidden');
+      document.getElementById('step-badge-text').textContent =
+        state.character === 'paul' ? 'Groups 1–3: Paul Pig' : 'Groups 4–6: Pippa Pig';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleHowToPlay(show) {
+      const modal = document.getElementById('how-to-play-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function toggleChallengeMe() {
+      const box = document.getElementById('challenge-me-box');
+      const arrow = document.getElementById('challenge-toggle-arrow');
+      const isHidden = box.classList.contains('hidden');
+      if (isHidden) {
+        box.classList.remove('hidden');
+        arrow.textContent = '▲';
+      } else {
+        box.classList.add('hidden');
+        arrow.textContent = '▼';
+      }
+    }
+
+    function fillPeerInput(inputId, text) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.value = text;
+      }
+    }
+
+    function openFinalLunchboxModal() {
+      const charName = state.character === 'paul' ? 'Paul Pig' : 'Pippa Pig';
+      document.getElementById('final-modal-title').textContent = `${charName}'s Healthy Lunchbox!`;
+      document.getElementById('final-modal-lunchbox').innerHTML = getCompactNewLunchboxHTML();
+      document.getElementById('final-modal-quote').textContent =
+        `"Thank you! My new Smart Lunch looks delicious and healthy!" — ${charName}`;
+
+      const modal = document.getElementById('final-lunchbox-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeFinalLunchboxModal() {
+      const modal = document.getElementById('final-lunchbox-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    let toastTimeout = null;
+    function showToast(message, icon = '💡') {
+      const banner = document.getElementById('toast-banner');
+      document.getElementById('toast-message').textContent = message;
+      document.getElementById('toast-icon').textContent = icon;
+      banner.classList.remove('hidden');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        hideToast();
+      }, 4500);
+    }
+
+    function hideToast() {
+      document.getElementById('toast-banner').classList.add('hidden');
+    }
+
+    // Boot application
+    window.addEventListener('DOMContentLoaded', () => {
+      initFoodBank();
+    });
+  </script>
+</body>
+</html>
